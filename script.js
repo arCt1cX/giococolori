@@ -4,6 +4,7 @@ const COLUMN_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let targetCell = null;
 let players = [];
 let startingHue = 0; // Randomized for each game
+const HUE_RANGE = 30; // Narrow range of hues (in degrees) for subtle changes
 
 // DOM Elements
 const gameSetupSection = document.getElementById('game-setup');
@@ -144,11 +145,11 @@ function generateColorGrid(gridElement) {
     }
 }
 
-// Get color for a specific cell position using pure HSL
+// Get color for a specific cell position using pure HSL with narrow hue range
 function getColorForCell(row, col) {
-    // Calculate hue - full spectrum across columns (0-360°)
-    // with random offset for each game to keep it varied
-    const hueStep = 360 / GRID_SIZE;
+    // Calculate hue - subtle range across columns
+    // Using only a 30-degree span of the hue spectrum for more subtle differences
+    const hueStep = HUE_RANGE / (GRID_SIZE - 1);
     const hue = (startingHue + col * hueStep) % 360;
     
     // Keep saturation high to ensure vibrant colors
@@ -156,7 +157,7 @@ function getColorForCell(row, col) {
     const saturation = 85 + (15 * row / (GRID_SIZE - 1));
     
     // Brightness varies from top (lighter) to bottom (darker)
-    // Top row 90% brightness, bottom row 50% brightness
+    // Top row 90% brightness, bottom row 50% brightness 
     const lightness = 90 - (40 * row / (GRID_SIZE - 1));
     
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
