@@ -85,7 +85,8 @@ function updateGridLabels() {
 
 // Start the game
 function startGame() {
-    // Pick a random color pair
+    // We'll still use the random color pair, but just for the random seed to pick
+    // a starting hue for our spectrum
     currentColorPair = colorPairs[Math.floor(Math.random() * colorPairs.length)];
     
     // Generate and show the target cell
@@ -225,84 +226,23 @@ function resetGame() {
     gameSetupSection.classList.remove('hidden');
 }
 
-// Clean gradient interpolation function
+// Full spectrum rainbow gradient interpolation
 function interpolateColor(normalizedRow, normalizedCol) {
-    // Create four corner colors for the grid
-    // We'll derive these from the original color pair to maintain the theme
+    // Get a seed value from the current color pair for randomizing the starting hue
     const startColor = hexToHSL(currentColorPair.start);
-    const endColor = hexToHSL(currentColorPair.end);
     
-    // Calculate color for top-left corner (will be the start color)
-    const topLeft = {
-        h: startColor.h,
-        s: startColor.s,
-        l: startColor.l
-    };
+    // Calculate hue based on column position
+    // Use the start color's hue as an offset to randomize the spectrum starting point
+    let hue = (startColor.h + normalizedCol * 360) % 360;
     
-    // Calculate color for top-right corner (same hue family as start, different saturation/lightness)
-    const topRight = {
-        h: startColor.h,
-        s: Math.min(100, startColor.s + 15),
-        l: Math.min(80, startColor.l + 10)
-    };
+    // Saturation decreases as we go up the rows (from 100% at bottom to 60% at top)
+    const saturation = 100 - normalizedRow * 40;
     
-    // Calculate color for bottom-left corner (transitioning toward end color)
-    const bottomLeft = {
-        h: endColor.h,
-        s: Math.min(100, endColor.s - 5),
-        l: Math.max(30, endColor.l - 15)
-    };
+    // Lightness increases as we go up the rows (from 50% at bottom to 95% at top)
+    // This creates the dark-to-light gradient from bottom to top like in the reference image
+    const lightness = 50 + normalizedRow * 45;
     
-    // Calculate color for bottom-right corner (will be the end color)
-    const bottomRight = {
-        h: endColor.h,
-        s: endColor.s,
-        l: endColor.l
-    };
-    
-    // Bilinear interpolation between the four corners
-    // First interpolate the top edge
-    const topColor = {
-        h: interpolateHue(topLeft.h, topRight.h, normalizedCol),
-        s: lerp(topLeft.s, topRight.s, normalizedCol),
-        l: lerp(topLeft.l, topRight.l, normalizedCol)
-    };
-    
-    // Interpolate the bottom edge
-    const bottomColor = {
-        h: interpolateHue(bottomLeft.h, bottomRight.h, normalizedCol),
-        s: lerp(bottomLeft.s, bottomRight.s, normalizedCol),
-        l: lerp(bottomLeft.l, bottomRight.l, normalizedCol)
-    };
-    
-    // Finally, interpolate between top and bottom
-    return `hsl(${interpolateHue(topColor.h, bottomColor.h, normalizedRow)}, 
-              ${lerp(topColor.s, bottomColor.s, normalizedRow)}%, 
-              ${lerp(topColor.l, bottomColor.l, normalizedRow)}%)`;
-}
-
-// Helper function for linear interpolation
-function lerp(start, end, t) {
-    return start + (end - start) * t;
-}
-
-// Helper function to interpolate hue values (handles the circular nature of hue)
-function interpolateHue(h1, h2, t) {
-    // Ensure both hues are in the same range
-    const hue1 = (h1 + 360) % 360;
-    const hue2 = (h2 + 360) % 360;
-    
-    // Find the shortest path around the color wheel
-    let delta = hue2 - hue1;
-    if (Math.abs(delta) > 180) {
-        delta = delta > 0 ? delta - 360 : delta + 360;
-    }
-    
-    // Calculate the interpolated hue
-    let result = (hue1 + delta * t) % 360;
-    if (result < 0) result += 360;
-    
-    return result;
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 // Convert hex color to HSL
