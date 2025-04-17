@@ -231,14 +231,17 @@ function interpolateColor(normalizedRow, normalizedCol) {
     const startColor = hexToHSL(currentColorPair.start);
     const endColor = hexToHSL(currentColorPair.end);
     
-    // Simple linear interpolation between the colors
-    // Using diagonal interpolation (normalizedRow + normalizedCol) / 2
-    const t = (normalizedRow + normalizedCol) / 2;
+    // Use separate factors for row and column instead of diagonal interpolation
+    // This creates a more varied 2D gradient where no two cells have the same color
     
-    // Interpolate HSL values
-    const h = startColor.h + (endColor.h - startColor.h) * t;
-    const s = startColor.s + (endColor.s - startColor.s) * t;
-    const l = startColor.l + (endColor.l - startColor.l) * t;
+    // Interpolate hue based on column position
+    const h = startColor.h + (endColor.h - startColor.h) * normalizedCol;
+    
+    // Interpolate saturation based on a mix of row and column
+    const s = startColor.s + (endColor.s - startColor.s) * (0.7 * normalizedRow + 0.3 * normalizedCol);
+    
+    // Interpolate lightness based primarily on row position
+    const l = startColor.l + (endColor.l - startColor.l) * (0.8 * normalizedRow + 0.2 * (1 - normalizedCol));
     
     return `hsl(${h}, ${s}%, ${l}%)`;
 }
