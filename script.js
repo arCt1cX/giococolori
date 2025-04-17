@@ -2,16 +2,8 @@
 const GRID_SIZE = 5;
 const COLUMN_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let targetCell = null;
-let colorPairs = [
-    { start: '#e74c3c', end: '#3498db' },    // Red to Blue
-    { start: '#2ecc71', end: '#f39c12' },    // Green to Orange
-    { start: '#ff6b81', end: '#fdcb6e' },    // Pink to Yellow
-    { start: '#9b59b6', end: '#1abc9c' },    // Purple to Cyan
-    { start: '#f368e0', end: '#00d2d3' },    // Bright Pink to Teal
-    { start: '#6c5ce7', end: '#feca57' }     // Indigo to Mustard
-];
-let currentColorPair = null;
 let players = [];
+let startingHue = 0; // Randomized for each game
 
 // DOM Elements
 const gameSetupSection = document.getElementById('game-setup');
@@ -85,9 +77,8 @@ function updateGridLabels() {
 
 // Start the game
 function startGame() {
-    // We'll still use the random color pair, but just for the random seed to pick
-    // a starting hue for our spectrum
-    currentColorPair = colorPairs[Math.floor(Math.random() * colorPairs.length)];
+    // Generate a random starting hue (0-359) for this game
+    startingHue = Math.floor(Math.random() * 360);
     
     // Generate and show the target cell
     targetCell = {
@@ -100,10 +91,7 @@ function startGame() {
     targetCoordsDisplay.textContent = cellCoords;
     
     // Set the target cell color
-    const cellColor = interpolateColor(
-        targetCell.row / (GRID_SIZE - 1),
-        targetCell.col / (GRID_SIZE - 1)
-    );
+    const cellColor = getColorForCell(targetCell.row, targetCell.col);
     targetCellDisplay.style.backgroundColor = cellColor;
     
     // Hide setup screen, show target reveal
@@ -139,12 +127,8 @@ function generateColorGrid(gridElement) {
             const cell = document.createElement('div');
             cell.classList.add('grid-cell');
             
-            // Normalize positions to 0-1 range for interpolation
-            const normalizedRow = row / (GRID_SIZE - 1);
-            const normalizedCol = col / (GRID_SIZE - 1);
-            
-            // Set the color using interpolation
-            const cellColor = interpolateColor(normalizedRow, normalizedCol);
+            // Get color for this cell position
+            const cellColor = getColorForCell(row, col);
             cell.style.backgroundColor = cellColor;
             
             // Add coordinates label for the results grid only
@@ -158,6 +142,24 @@ function generateColorGrid(gridElement) {
             gridElement.appendChild(cell);
         }
     }
+}
+
+// Get color for a specific cell position using pure HSL
+function getColorForCell(row, col) {
+    // Calculate hue - full spectrum across columns (0-360°)
+    // with random offset for each game to keep it varied
+    const hueStep = 360 / GRID_SIZE;
+    const hue = (startingHue + col * hueStep) % 360;
+    
+    // Keep saturation high to ensure vibrant colors
+    // Top row slightly less saturated (85%), bottom row fully saturated (100%)
+    const saturation = 85 + (15 * row / (GRID_SIZE - 1));
+    
+    // Brightness varies from top (lighter) to bottom (darker)
+    // Top row 90% brightness, bottom row 50% brightness
+    const lightness = 90 - (40 * row / (GRID_SIZE - 1));
+    
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 // Add a new player input
@@ -224,57 +226,6 @@ function revealAnswer() {
 function resetGame() {
     gameResultSection.classList.add('hidden');
     gameSetupSection.classList.remove('hidden');
-}
-
-// Full spectrum rainbow gradient interpolation
-function interpolateColor(normalizedRow, normalizedCol) {
-    // Get a seed value from the current color pair for randomizing the starting hue
-    const startColor = hexToHSL(currentColorPair.start);
-    
-    // Calculate hue based on column position
-    // Use the start color's hue as an offset to randomize the spectrum starting point
-    let hue = (startColor.h + normalizedCol * 360) % 360;
-    
-    // Saturation decreases as we go up the rows (from 100% at bottom to 60% at top)
-    const saturation = 100 - normalizedRow * 40;
-    
-    // Lightness increases as we go up the rows (from 50% at bottom to 95% at top)
-    // This creates the dark-to-light gradient from bottom to top like in the reference image
-    const lightness = 50 + normalizedRow * 45;
-    
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-}
-
-// Convert hex color to HSL
-function hexToHSL(hex) {
-    // Remove # if present
-    hex = hex.replace('#', '');
-    
-    // Convert to RGB
-    const r = parseInt(hex.substring(0, 2), 16) / 255;
-    const g = parseInt(hex.substring(2, 4), 16) / 255;
-    const b = parseInt(hex.substring(4, 6), 16) / 255;
-    
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-    
-    if (max === min) {
-        h = s = 0; // achromatic
-    } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        
-        switch(max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        
-        h *= 60;
-    }
-    
-    return { h, s: s * 100, l: l * 100 };
 }
 
 // Initialize the game on load
