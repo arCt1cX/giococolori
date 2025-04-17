@@ -225,25 +225,46 @@ function resetGame() {
     gameSetupSection.classList.remove('hidden');
 }
 
-// Color interpolation function (using HSL)
+// Rainbow-style color interpolation
 function interpolateColor(normalizedRow, normalizedCol) {
-    // Convert hex colors to HSL
+    // Start with the HSL values from the color pair
     const startColor = hexToHSL(currentColorPair.start);
     const endColor = hexToHSL(currentColorPair.end);
     
-    // Use separate factors for row and column instead of diagonal interpolation
-    // This creates a more varied 2D gradient where no two cells have the same color
+    // Calculate the total hue range (considering the possibility that we need to wrap around 360 degrees)
+    let hueRange = endColor.h - startColor.h;
+    if (Math.abs(hueRange) > 180) {
+        // Take the shorter path around the hue circle
+        hueRange = hueRange > 0 ? hueRange - 360 : hueRange + 360;
+    }
     
-    // Interpolate hue based on column position
-    const h = startColor.h + (endColor.h - startColor.h) * normalizedCol;
+    // Create unique hue for each position in the grid using a combination of row and column
+    // We'll use a sine wave pattern to create smooth transitions that aren't linear
+    const rowFactor = Math.sin(normalizedRow * Math.PI);
+    const colFactor = Math.sin(normalizedCol * Math.PI);
     
-    // Interpolate saturation based on a mix of row and column
-    const s = startColor.s + (endColor.s - startColor.s) * (0.7 * normalizedRow + 0.3 * normalizedCol);
+    // Calculate base hue from the start, adjusting by position factors
+    let hue = startColor.h + hueRange * (normalizedCol * 0.6 + normalizedRow * 0.4);
     
-    // Interpolate lightness based primarily on row position
-    const l = startColor.l + (endColor.l - startColor.l) * (0.8 * normalizedRow + 0.2 * (1 - normalizedCol));
+    // Apply a slight wave pattern to create more variation
+    hue += 15 * Math.sin((normalizedRow + normalizedCol) * 3 * Math.PI);
     
-    return `hsl(${h}, ${s}%, ${l}%)`;
+    // Ensure hue stays within 0-360 range
+    hue = (hue + 360) % 360;
+    
+    // Calculate saturation with slight variations
+    const saturation = Math.max(20, Math.min(100, 
+        startColor.s + (endColor.s - startColor.s) * normalizedCol + 
+        5 * Math.sin(normalizedRow * 2 * Math.PI)
+    ));
+    
+    // Calculate lightness based on both position with complementary patterns
+    const lightness = Math.max(20, Math.min(80, 
+        startColor.l + (endColor.l - startColor.l) * normalizedRow +
+        8 * Math.sin((normalizedCol - normalizedRow) * 2 * Math.PI)
+    ));
+    
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
 
 // Convert hex color to HSL
