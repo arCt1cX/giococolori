@@ -153,12 +153,12 @@ function getColorForCell(row, col) {
     const hue = (startingHue + col * hueStep) % 360;
     
     // Keep saturation high to ensure vibrant colors
-    // Top row slightly less saturated (85%), bottom row fully saturated (100%)
-    const saturation = 85 + (15 * row / (GRID_SIZE - 1));
+    // Top row slightly less saturated (90%), bottom row fully saturated (100%)
+    const saturation = 90 + (10 * row / (GRID_SIZE - 1));
     
-    // Brightness varies from top (lighter) to bottom (darker)
-    // Top row 90% brightness, bottom row 50% brightness 
-    const lightness = 90 - (40 * row / (GRID_SIZE - 1));
+    // Brightness varies from top (medium) to bottom (darker)
+    // Top row 80% brightness, bottom row 45% brightness 
+    const lightness = 80 - (35 * row / (GRID_SIZE - 1));
     
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
