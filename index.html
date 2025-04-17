@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Grid Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Color Grid Game</h1>
+        
+        <div id="game-setup" class="game-section">
+            <p>A party game for 3+ players. One player will see a secret cell, then others try to guess it!</p>
+            <button id="start-game" class="btn">Start New Game</button>
+        </div>
+
+        <div id="target-reveal" class="game-section hidden">
+            <h2>Remember this cell!</h2>
+            <div id="target-cell"></div>
+            <p id="target-coords"></p>
+            <button id="got-it" class="btn">Got It!</button>
+        </div>
+
+        <div id="game-play" class="game-section hidden">
+            <div id="color-grid" class="grid"></div>
+            
+            <div id="guessing-area">
+                <div id="player-inputs"></div>
+                <button id="add-player" class="btn">Add Player</button>
+                <button id="reveal-answer" class="btn">Reveal Answer</button>
+            </div>
+        </div>
+
+        <div id="game-result" class="game-section hidden">
+            <h2>Results</h2>
+            <div id="result-grid" class="grid"></div>
+            <div id="results-list"></div>
+            <button id="play-again" class="btn">Play Again</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
