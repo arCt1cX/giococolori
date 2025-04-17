@@ -4,7 +4,23 @@ const COLUMN_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let targetCell = null;
 let players = [];
 let startingHue = 0; // Randomized for each game
-const HUE_RANGE = 30; // Narrow range of hues (in degrees) for subtle changes
+const HUE_RANGE = 60; // Wider range of hues for more natural color variation
+
+// Natural color presets that match real-world objects
+const NATURAL_COLOR_BASES = [
+    { hue: 0, name: "Red" },           // Red (apples, strawberries)
+    { hue: 30, name: "Orange" },       // Orange (oranges, pumpkins)
+    { hue: 50, name: "Yellow" },       // Yellow (bananas, lemons)
+    { hue: 80, name: "Lime" },         // Lime/Yellow-Green (limes, leaves)
+    { hue: 120, name: "Green" },       // Green (grass, leaves)
+    { hue: 160, name: "Teal" },        // Teal (turquoise, some ocean water)
+    { hue: 200, name: "Sky Blue" },    // Sky Blue (clear sky)
+    { hue: 220, name: "Blue" },        // Blue (blueberries, jeans)
+    { hue: 260, name: "Purple" },      // Purple (grapes, lavender)
+    { hue: 280, name: "Magenta" },     // Magenta (some flowers)
+    { hue: 320, name: "Pink" },        // Pink (pink flowers, cotton candy)
+    { hue: 350, name: "Rose" }         // Rose/Dark Pink (roses)
+];
 
 // DOM Elements
 const gameSetupSection = document.getElementById('game-setup');
@@ -78,8 +94,9 @@ function updateGridLabels() {
 
 // Start the game
 function startGame() {
-    // Generate a random starting hue (0-359) for this game
-    startingHue = Math.floor(Math.random() * 360);
+    // Pick a random natural color base from our predefined list
+    const randomColorIndex = Math.floor(Math.random() * NATURAL_COLOR_BASES.length);
+    startingHue = NATURAL_COLOR_BASES[randomColorIndex].hue;
     
     // Generate and show the target cell
     targetCell = {
@@ -145,20 +162,19 @@ function generateColorGrid(gridElement) {
     }
 }
 
-// Get color for a specific cell position using pure HSL with narrow hue range
+// Get color for a specific cell position using natural colors
 function getColorForCell(row, col) {
-    // Calculate hue - subtle range across columns
-    // Using only a 30-degree span of the hue spectrum for more subtle differences
+    // Calculate hue - within our natural color range
     const hueStep = HUE_RANGE / (GRID_SIZE - 1);
     const hue = (startingHue + col * hueStep) % 360;
     
-    // Keep saturation high to ensure vibrant colors
-    // Top row slightly less saturated (90%), bottom row fully saturated (100%)
-    const saturation = 90 + (10 * row / (GRID_SIZE - 1));
+    // More moderate saturation for natural colors
+    // From 70% to 85% - natural objects are rarely 100% saturated
+    const saturation = 70 + (15 * row / (GRID_SIZE - 1));
     
-    // Brightness varies from top (medium) to bottom (darker)
-    // Top row 80% brightness, bottom row 45% brightness 
-    const lightness = 80 - (35 * row / (GRID_SIZE - 1));
+    // More moderate lightness range for natural colors
+    // From 75% down to 45% - avoiding extreme light/dark
+    const lightness = 75 - (30 * row / (GRID_SIZE - 1));
     
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
