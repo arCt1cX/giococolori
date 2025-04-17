@@ -2,15 +2,15 @@
 const GRID_SIZE = 5;
 const COLUMN_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let targetCell = null;
-let colorPairs = [
-    { start: '#e74c3c', end: '#3498db' },    // Red to Blue
-    { start: '#2ecc71', end: '#f39c12' },    // Green to Orange
-    { start: '#ff6b81', end: '#fdcb6e' },    // Pink to Yellow
-    { start: '#9b59b6', end: '#1abc9c' },    // Purple to Cyan
-    { start: '#f368e0', end: '#00d2d3' },    // Bright Pink to Teal
-    { start: '#6c5ce7', end: '#feca57' }     // Indigo to Mustard
+let colorSets = [
+    { topLeft: '#e74c3c', topRight: '#3498db', bottomLeft: '#2ecc71', bottomRight: '#f39c12' },    // Red, Blue, Green, Orange
+    { topLeft: '#9b59b6', topRight: '#1abc9c', bottomLeft: '#f368e0', bottomRight: '#feca57' },    // Purple, Cyan, Pink, Yellow
+    { topLeft: '#6c5ce7', topRight: '#00d2d3', bottomLeft: '#fd79a8', bottomRight: '#fdcb6e' },    // Indigo, Teal, Pink, Light Yellow
+    { topLeft: '#c0392b', topRight: '#8e44ad', bottomLeft: '#16a085', bottomRight: '#f1c40f' },    // Dark Red, Purple, Teal, Yellow
+    { topLeft: '#ff6b6b', topRight: '#48dbfb', bottomLeft: '#1dd1a1', bottomRight: '#feca57' },    // Light Red, Light Blue, Mint, Light Orange
+    { topLeft: '#5f27cd', topRight: '#ff9ff3', bottomLeft: '#1b9cfc', bottomRight: '#ff6b6b' }     // Dark Purple, Light Pink, Blue, Red
 ];
-let currentColorPair = null;
+let currentColorSet = null;
 let players = [];
 
 // DOM Elements
@@ -45,8 +45,8 @@ function init() {
 
 // Start the game
 function startGame() {
-    // Pick a random color pair
-    currentColorPair = colorPairs[Math.floor(Math.random() * colorPairs.length)];
+    // Pick a random color set
+    currentColorSet = colorSets[Math.floor(Math.random() * colorSets.length)];
     
     // Generate and show the target cell
     targetCell = {
@@ -92,6 +92,50 @@ function showGamePlay() {
 function generateColorGrid(gridElement) {
     gridElement.innerHTML = '';
     
+    // Add row labels container (for numbers 1-5)
+    if (gridElement === colorGrid || gridElement === resultGrid) {
+        const rowLabelsContainer = document.createElement('div');
+        rowLabelsContainer.classList.add('row-labels');
+        
+        // Add empty cell for top-left corner
+        const emptyCorner = document.createElement('div');
+        emptyCorner.classList.add('corner-label');
+        rowLabelsContainer.appendChild(emptyCorner);
+        
+        // Add column labels (A-E)
+        for (let col = 0; col < GRID_SIZE; col++) {
+            const colLabel = document.createElement('div');
+            colLabel.classList.add('col-label');
+            colLabel.textContent = COLUMN_LABELS[col];
+            rowLabelsContainer.appendChild(colLabel);
+        }
+        
+        gridElement.appendChild(rowLabelsContainer);
+    }
+    
+    // Create grid with row labels
+    const gridContainer = document.createElement('div');
+    gridContainer.classList.add('grid-container');
+    
+    // Add row labels
+    if (gridElement === colorGrid || gridElement === resultGrid) {
+        const rowLabelsCol = document.createElement('div');
+        rowLabelsCol.classList.add('row-labels-column');
+        
+        for (let row = 0; row < GRID_SIZE; row++) {
+            const rowLabel = document.createElement('div');
+            rowLabel.classList.add('row-label');
+            rowLabel.textContent = row + 1;
+            rowLabelsCol.appendChild(rowLabel);
+        }
+        
+        gridContainer.appendChild(rowLabelsCol);
+    }
+    
+    // Create the actual color grid
+    const actualGrid = document.createElement('div');
+    actualGrid.classList.add('actual-grid');
+    
     // Create cells
     for (let row = 0; row < GRID_SIZE; row++) {
         for (let col = 0; col < GRID_SIZE; col++) {
@@ -106,22 +150,20 @@ function generateColorGrid(gridElement) {
             const cellColor = interpolateColor(normalizedRow, normalizedCol);
             cell.style.backgroundColor = cellColor;
             
-            // Add coordinates label
+            // Add coordinates label on the result grid
             if (gridElement === resultGrid) {
-                const label = document.createElement('div');
-                label.classList.add('grid-label');
-                label.textContent = `${COLUMN_LABELS[col]}${row + 1}`;
-                cell.appendChild(label);
-                
                 // Highlight the target cell in the results grid
                 if (row === targetCell.row && col === targetCell.col) {
                     cell.classList.add('target');
                 }
             }
             
-            gridElement.appendChild(cell);
+            actualGrid.appendChild(cell);
         }
     }
+    
+    gridContainer.appendChild(actualGrid);
+    gridElement.appendChild(gridContainer);
 }
 
 // Add a new player input
@@ -190,54 +232,50 @@ function resetGame() {
     gameSetupSection.classList.remove('hidden');
 }
 
-// Color interpolation function (using HSL)
+// Color interpolation function (using four corners)
 function interpolateColor(normalizedRow, normalizedCol) {
-    // Convert hex colors to HSL
-    const startColor = hexToHSL(currentColorPair.start);
-    const endColor = hexToHSL(currentColorPair.end);
+    // Get the four corner colors
+    const topLeft = hexToRGB(currentColorSet.topLeft);
+    const topRight = hexToRGB(currentColorSet.topRight);
+    const bottomLeft = hexToRGB(currentColorSet.bottomLeft);
+    const bottomRight = hexToRGB(currentColorSet.bottomRight);
     
-    // Simple linear interpolation between the colors
-    // Using diagonal interpolation (normalizedRow + normalizedCol) / 2
-    const t = (normalizedRow + normalizedCol) / 2;
+    // Bilinear interpolation
+    // First interpolate the top colors based on column
+    const topColor = {
+        r: topLeft.r + (topRight.r - topLeft.r) * normalizedCol,
+        g: topLeft.g + (topRight.g - topLeft.g) * normalizedCol,
+        b: topLeft.b + (topRight.b - topLeft.b) * normalizedCol
+    };
     
-    // Interpolate HSL values
-    const h = startColor.h + (endColor.h - startColor.h) * t;
-    const s = startColor.s + (endColor.s - startColor.s) * t;
-    const l = startColor.l + (endColor.l - startColor.l) * t;
+    // Then interpolate the bottom colors based on column
+    const bottomColor = {
+        r: bottomLeft.r + (bottomRight.r - bottomLeft.r) * normalizedCol,
+        g: bottomLeft.g + (bottomRight.g - bottomLeft.g) * normalizedCol,
+        b: bottomLeft.b + (bottomRight.b - bottomLeft.b) * normalizedCol
+    };
     
-    return `hsl(${h}, ${s}%, ${l}%)`;
+    // Finally, interpolate between top and bottom based on row
+    const finalColor = {
+        r: Math.round(topColor.r + (bottomColor.r - topColor.r) * normalizedRow),
+        g: Math.round(topColor.g + (bottomColor.g - topColor.g) * normalizedRow),
+        b: Math.round(topColor.b + (bottomColor.b - topColor.b) * normalizedRow)
+    };
+    
+    return `rgb(${finalColor.r}, ${finalColor.g}, ${finalColor.b})`;
 }
 
-// Convert hex color to HSL
-function hexToHSL(hex) {
+// Convert hex color to RGB
+function hexToRGB(hex) {
     // Remove # if present
     hex = hex.replace('#', '');
     
     // Convert to RGB
-    const r = parseInt(hex.substring(0, 2), 16) / 255;
-    const g = parseInt(hex.substring(2, 4), 16) / 255;
-    const b = parseInt(hex.substring(4, 6), 16) / 255;
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
     
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    let h, s, l = (max + min) / 2;
-    
-    if (max === min) {
-        h = s = 0; // achromatic
-    } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        
-        switch(max) {
-            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-            case g: h = (b - r) / d + 2; break;
-            case b: h = (r - g) / d + 4; break;
-        }
-        
-        h *= 60;
-    }
-    
-    return { h, s: s * 100, l: l * 100 };
+    return { r, g, b };
 }
 
 // Initialize the game on load

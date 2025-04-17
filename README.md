@@ -14,7 +14,8 @@ A mobile-friendly party game for 3+ players on a single phone. Players try to re
 ## Features
 
 - Responsive design that works well on mobile devices
-- Random color gradients for visual variety
+- Four-corner color gradients for visual variety and challenge
+- Coordinate labels on rows and columns for easier cell identification
 - Multiple player support
 - Simple and intuitive interface
 - Dark theme for comfortable viewing
@@ -25,19 +26,20 @@ This app is built with pure HTML, CSS, and JavaScript without any frameworks or 
 
 ### Color Grid
 
-- A 5x5 grid of colors formed by smoothly interpolating between two random colors
-- Colors are interpolated using HSL for more visually pleasing gradients
+- A 5x5 grid of colors formed by smoothly interpolating between four different corner colors
+- Colors use bilinear interpolation for smooth transitions
 - Grid size can be easily modified by changing the `GRID_SIZE` constant in the JavaScript file
+- Grid includes coordinate labels (A-E for columns, 1-5 for rows)
 
-### Color Pairs
+### Color Sets
 
-Color pairs are defined in the `colorPairs` array in the JavaScript file. To add more color combinations:
+Color sets are defined in the `colorSets` array in the JavaScript file. Each set defines colors for all four corners. To add more color combinations:
 
 ```javascript
-let colorPairs = [
-    { start: '#e74c3c', end: '#3498db' },    // Red to Blue
-    { start: '#2ecc71', end: '#f39c12' },    // Green to Orange
-    // Add more color pairs here
+let colorSets = [
+    { topLeft: '#e74c3c', topRight: '#3498db', bottomLeft: '#2ecc71', bottomRight: '#f39c12' },
+    { topLeft: '#9b59b6', topRight: '#1abc9c', bottomLeft: '#f368e0', bottomRight: '#feca57' },
+    // Add more color sets here
 ];
 ```
 
