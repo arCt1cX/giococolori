@@ -225,46 +225,84 @@ function resetGame() {
     gameSetupSection.classList.remove('hidden');
 }
 
-// Rainbow-style color interpolation
+// Clean gradient interpolation function
 function interpolateColor(normalizedRow, normalizedCol) {
-    // Start with the HSL values from the color pair
+    // Create four corner colors for the grid
+    // We'll derive these from the original color pair to maintain the theme
     const startColor = hexToHSL(currentColorPair.start);
     const endColor = hexToHSL(currentColorPair.end);
     
-    // Calculate the total hue range (considering the possibility that we need to wrap around 360 degrees)
-    let hueRange = endColor.h - startColor.h;
-    if (Math.abs(hueRange) > 180) {
-        // Take the shorter path around the hue circle
-        hueRange = hueRange > 0 ? hueRange - 360 : hueRange + 360;
+    // Calculate color for top-left corner (will be the start color)
+    const topLeft = {
+        h: startColor.h,
+        s: startColor.s,
+        l: startColor.l
+    };
+    
+    // Calculate color for top-right corner (same hue family as start, different saturation/lightness)
+    const topRight = {
+        h: startColor.h,
+        s: Math.min(100, startColor.s + 15),
+        l: Math.min(80, startColor.l + 10)
+    };
+    
+    // Calculate color for bottom-left corner (transitioning toward end color)
+    const bottomLeft = {
+        h: endColor.h,
+        s: Math.min(100, endColor.s - 5),
+        l: Math.max(30, endColor.l - 15)
+    };
+    
+    // Calculate color for bottom-right corner (will be the end color)
+    const bottomRight = {
+        h: endColor.h,
+        s: endColor.s,
+        l: endColor.l
+    };
+    
+    // Bilinear interpolation between the four corners
+    // First interpolate the top edge
+    const topColor = {
+        h: interpolateHue(topLeft.h, topRight.h, normalizedCol),
+        s: lerp(topLeft.s, topRight.s, normalizedCol),
+        l: lerp(topLeft.l, topRight.l, normalizedCol)
+    };
+    
+    // Interpolate the bottom edge
+    const bottomColor = {
+        h: interpolateHue(bottomLeft.h, bottomRight.h, normalizedCol),
+        s: lerp(bottomLeft.s, bottomRight.s, normalizedCol),
+        l: lerp(bottomLeft.l, bottomRight.l, normalizedCol)
+    };
+    
+    // Finally, interpolate between top and bottom
+    return `hsl(${interpolateHue(topColor.h, bottomColor.h, normalizedRow)}, 
+              ${lerp(topColor.s, bottomColor.s, normalizedRow)}%, 
+              ${lerp(topColor.l, bottomColor.l, normalizedRow)}%)`;
+}
+
+// Helper function for linear interpolation
+function lerp(start, end, t) {
+    return start + (end - start) * t;
+}
+
+// Helper function to interpolate hue values (handles the circular nature of hue)
+function interpolateHue(h1, h2, t) {
+    // Ensure both hues are in the same range
+    const hue1 = (h1 + 360) % 360;
+    const hue2 = (h2 + 360) % 360;
+    
+    // Find the shortest path around the color wheel
+    let delta = hue2 - hue1;
+    if (Math.abs(delta) > 180) {
+        delta = delta > 0 ? delta - 360 : delta + 360;
     }
     
-    // Create unique hue for each position in the grid using a combination of row and column
-    // We'll use a sine wave pattern to create smooth transitions that aren't linear
-    const rowFactor = Math.sin(normalizedRow * Math.PI);
-    const colFactor = Math.sin(normalizedCol * Math.PI);
+    // Calculate the interpolated hue
+    let result = (hue1 + delta * t) % 360;
+    if (result < 0) result += 360;
     
-    // Calculate base hue from the start, adjusting by position factors
-    let hue = startColor.h + hueRange * (normalizedCol * 0.6 + normalizedRow * 0.4);
-    
-    // Apply a slight wave pattern to create more variation
-    hue += 15 * Math.sin((normalizedRow + normalizedCol) * 3 * Math.PI);
-    
-    // Ensure hue stays within 0-360 range
-    hue = (hue + 360) % 360;
-    
-    // Calculate saturation with slight variations
-    const saturation = Math.max(20, Math.min(100, 
-        startColor.s + (endColor.s - startColor.s) * normalizedCol + 
-        5 * Math.sin(normalizedRow * 2 * Math.PI)
-    ));
-    
-    // Calculate lightness based on both position with complementary patterns
-    const lightness = Math.max(20, Math.min(80, 
-        startColor.l + (endColor.l - startColor.l) * normalizedRow +
-        8 * Math.sin((normalizedCol - normalizedRow) * 2 * Math.PI)
-    ));
-    
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+    return result;
 }
 
 // Convert hex color to HSL
