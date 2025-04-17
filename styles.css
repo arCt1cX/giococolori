@@ -4,7 +4,6 @@
     --primary-color: #8e44ad;
     --primary-color-light: #9b59b6;
     --grid-size: 5;
-    --label-bg: #2c2c2c;
 }
 
 * {
@@ -69,64 +68,51 @@ p {
     display: none;
 }
 
-.grid {
-    margin: 20px 0;
-    width: 100%;
-    max-width: 400px;
-}
-
 /* Grid container with labels */
 .grid-container {
     display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
     width: 100%;
+    max-width: 440px;
 }
 
-.row-labels {
+.grid-labels-row {
     display: grid;
-    grid-template-columns: repeat(calc(var(--grid-size) + 1), 1fr);
+    grid-template-columns: 40px repeat(var(--grid-size), 1fr);
     width: 100%;
     gap: 4px;
     margin-bottom: 4px;
 }
 
-.corner-label {
-    background-color: var(--label-bg);
-    border-radius: 6px;
+.grid-with-labels {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    aspect-ratio: 1 / 1;
+    width: 100%;
 }
 
-.col-label {
-    background-color: var(--label-bg);
-    border-radius: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-    aspect-ratio: 1 / 1;
-}
-
-.row-labels-column {
-    display: flex;
-    flex-direction: column;
-    margin-right: 4px;
+.grid-labels-col {
+    display: grid;
+    grid-template-rows: repeat(var(--grid-size), 1fr);
     gap: 4px;
+    margin-right: 4px;
+    width: 40px;
 }
 
-.row-label {
-    background-color: var(--label-bg);
-    border-radius: 6px;
+.col-label, .row-label {
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    aspect-ratio: 1 / 1;
-    flex: 1;
+    color: var(--text-color);
+    font-size: 18px;
 }
 
-.actual-grid {
+.empty-corner {
+    width: 40px;
+}
+
+.grid {
     display: grid;
     grid-template-columns: repeat(var(--grid-size), 1fr);
     grid-template-rows: repeat(var(--grid-size), 1fr);
@@ -140,7 +126,6 @@ p {
     cursor: pointer;
     transition: transform 0.2s;
     position: relative;
-    aspect-ratio: 1 / 1;
 }
 
 .grid-cell:hover {
@@ -234,11 +219,23 @@ p {
         font-size: 14px;
     }
     
-    .grid {
-        max-width: 300px;
+    .grid-container {
+        max-width: 340px;
     }
     
     .col-label, .row-label {
-        font-size: 14px;
+        font-size: 16px;
+    }
+    
+    .grid-labels-row {
+        grid-template-columns: 30px repeat(var(--grid-size), 1fr);
+    }
+    
+    .grid-labels-col {
+        width: 30px;
+    }
+    
+    .empty-corner {
+        width: 30px;
     }
 } 

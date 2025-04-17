@@ -23,7 +23,26 @@
         </div>
 
         <div id="game-play" class="game-section hidden">
-            <div id="color-grid" class="grid"></div>
+            <div class="grid-container">
+                <div class="grid-labels-row">
+                    <div class="empty-corner"></div>
+                    <div class="col-label">A</div>
+                    <div class="col-label">B</div>
+                    <div class="col-label">C</div>
+                    <div class="col-label">D</div>
+                    <div class="col-label">E</div>
+                </div>
+                <div class="grid-with-labels">
+                    <div class="grid-labels-col">
+                        <div class="row-label">1</div>
+                        <div class="row-label">2</div>
+                        <div class="row-label">3</div>
+                        <div class="row-label">4</div>
+                        <div class="row-label">5</div>
+                    </div>
+                    <div id="color-grid" class="grid"></div>
+                </div>
+            </div>
             
             <div id="guessing-area">
                 <div id="player-inputs"></div>
@@ -34,7 +53,26 @@
 
         <div id="game-result" class="game-section hidden">
             <h2>Results</h2>
-            <div id="result-grid" class="grid"></div>
+            <div class="grid-container">
+                <div class="grid-labels-row">
+                    <div class="empty-corner"></div>
+                    <div class="col-label">A</div>
+                    <div class="col-label">B</div>
+                    <div class="col-label">C</div>
+                    <div class="col-label">D</div>
+                    <div class="col-label">E</div>
+                </div>
+                <div class="grid-with-labels">
+                    <div class="grid-labels-col">
+                        <div class="row-label">1</div>
+                        <div class="row-label">2</div>
+                        <div class="row-label">3</div>
+                        <div class="row-label">4</div>
+                        <div class="row-label">5</div>
+                    </div>
+                    <div id="result-grid" class="grid"></div>
+                </div>
+            </div>
             <div id="results-list"></div>
             <button id="play-again" class="btn">Play Again</button>
         </div>
