@@ -4,7 +4,7 @@ const COLUMN_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let targetCell = null;
 let players = [];
 let startingHue = 0; // Randomized for each game
-const HUE_RANGE = 90; // Increased range of hues for better differentiation
+const HUE_RANGE = 120; // Further increased range for much clearer differences
 
 // Natural color presets that match real-world objects
 const NATURAL_COLOR_BASES = [
@@ -162,19 +162,25 @@ function generateColorGrid(gridElement) {
     }
 }
 
-// Get color for a specific cell position using natural colors
+// Get color for a specific cell position using natural colors with greater differences
 function getColorForCell(row, col) {
-    // Calculate hue - with increased range for better differentiation
+    // Skip cells for even greater differences - we'll use less of the full grid
+    // Skip every other column and row value to create bigger jumps between colors
+    const skipFactor = 2;
+    const effectiveRow = row * skipFactor;
+    const effectiveCol = col * skipFactor;
+    
+    // Calculate hue with much wider spacing
     const hueStep = HUE_RANGE / (GRID_SIZE - 1);
-    const hue = (startingHue + col * hueStep) % 360;
+    const hue = (startingHue + effectiveCol * hueStep) % 360;
     
-    // More distinct saturation steps
-    // From 65% to 90% with more noticeable steps
-    const saturation = 65 + (25 * row / (GRID_SIZE - 1));
+    // Very distinct saturation steps - now with wider jumps
+    // From 60% to 95% with large steps
+    const saturation = 60 + (35 * effectiveRow / ((GRID_SIZE - 1) * skipFactor));
     
-    // More distinct lightness steps
-    // From 80% down to 40% with bigger steps between rows
-    const lightness = 80 - (40 * row / (GRID_SIZE - 1));
+    // Much more distinct lightness steps
+    // From 85% down to 35% with bigger jumps
+    const lightness = 85 - (50 * effectiveRow / ((GRID_SIZE - 1) * skipFactor));
     
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
