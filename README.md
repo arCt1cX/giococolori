@@ -1,53 +1,53 @@
-# Color Grid Game
+# Gioco dei Colori
 
-A mobile-friendly party game for 3+ players on a single phone. Players try to remember and guess a color from a 5x5 gradient grid.
+Un gioco per dispositivi mobili per 3+ giocatori su un singolo telefono. I giocatori cercano di ricordare e indovinare un colore da una griglia 5x5.
 
-## How to Play
+## Come Giocare
 
-1. **Start the Game**: The first player starts the game and is shown a secret target cell (like "C3").
-2. **Remember the Cell**: This player should memorize the coordinates and then press "Got It!".
-3. **Show the Grid**: Now all players can see the full color grid with its smooth gradient.
-4. **Make Guesses**: Other players enter their guesses for the target cell using the coordinate system.
-5. **Reveal the Answer**: After all players have submitted their guesses, press "Reveal Answer".
-6. **See Results**: The app shows which players guessed correctly and highlights the target cell.
+1. **Inizia il Gioco**: Il primo giocatore inizia il gioco e gli viene mostrata una cella segreta (come "C3").
+2. **Ricorda la Cella**: Questo giocatore deve memorizzare le coordinate e poi premere "Ho Capito!".
+3. **Mostra la Griglia**: Ora tutti i giocatori possono vedere la griglia completa con il suo gradiente di colori.
+4. **Fai le Ipotesi**: Gli altri giocatori inseriscono le loro ipotesi per la cella target usando il sistema di coordinate.
+5. **Rivela la Risposta**: Dopo che tutti i giocatori hanno inviato le loro ipotesi, premi "Rivela Risposta".
+6. **Vedi i Risultati**: L'app mostra quali giocatori hanno indovinato correttamente e evidenzia la cella target.
 
-## Features
+## Caratteristiche
 
-- Responsive design that works well on mobile devices
-- Random color gradients for visual variety
-- Multiple player support
-- Simple and intuitive interface
-- Dark theme for comfortable viewing
+- Design responsive che funziona bene su dispositivi mobili
+- Gradienti di colori casuali per varietà visiva
+- Supporto per più giocatori
+- Interfaccia semplice e intuitiva
+- Tema scuro per una visualizzazione confortevole
 
-## Technical Details
+## Dettagli Tecnici
 
-This app is built with pure HTML, CSS, and JavaScript without any frameworks or libraries.
+Questa app è costruita con HTML, CSS e JavaScript puro senza framework o librerie.
 
-### Color Grid
+### Griglia di Colori
 
-- A 5x5 grid of colors formed by smoothly interpolating between two random colors
-- Colors are interpolated using HSL for more visually pleasing gradients
-- Grid size can be easily modified by changing the `GRID_SIZE` constant in the JavaScript file
+- Una griglia 5x5 di colori formata interpolando dolcemente tra colori naturali
+- I colori sono interpolati usando HSL per gradienti visivamente piacevoli
+- La dimensione della griglia può essere facilmente modificata cambiando la costante `GRID_SIZE` nel file JavaScript
 
-### Color Pairs
+### Colori Naturali
 
-Color pairs are defined in the `colorPairs` array in the JavaScript file. To add more color combinations:
+I colori sono definiti nell'array `NATURAL_COLOR_BASES` nel file JavaScript. Per aggiungere più combinazioni di colori:
 
 ```javascript
-let colorPairs = [
-    { start: '#e74c3c', end: '#3498db' },    // Red to Blue
-    { start: '#2ecc71', end: '#f39c12' },    // Green to Orange
-    // Add more color pairs here
+const NATURAL_COLOR_BASES = [
+    { hue: 0, name: "Rosso" },        // Rosso (mele, fragole)
+    { hue: 30, name: "Arancione" },   // Arancione (arance, zucche)
+    // Aggiungi altri colori qui
 ];
 ```
 
-## How to Run
+## Come Eseguire
 
-Simply open the `index.html` file in any modern web browser. No server or installation required.
+Semplicemente apri il file `index.html` in qualsiasi browser moderno. Nessun server o installazione richiesta.
 
-## Browser Compatibility
+## Compatibilità Browser
 
-This app works in all modern browsers, including:
+Questa app funziona in tutti i browser moderni, inclusi:
 - Chrome
 - Firefox
 - Safari

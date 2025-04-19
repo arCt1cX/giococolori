@@ -6,20 +6,20 @@ let players = [];
 let startingHue = 0; // Randomized for each game
 const HUE_RANGE = 120; // Further increased range for more distinct colors
 
-// Natural color presets that match real-world objects
+// Italian translations for color names
 const NATURAL_COLOR_BASES = [
-    { hue: 0, name: "Red" },           // Red (apples, strawberries)
-    { hue: 30, name: "Orange" },       // Orange (oranges, pumpkins)
-    { hue: 50, name: "Yellow" },       // Yellow (bananas, lemons)
+    { hue: 0, name: "Rosso" },         // Red (apples, strawberries)
+    { hue: 30, name: "Arancione" },    // Orange (oranges, pumpkins)
+    { hue: 50, name: "Giallo" },       // Yellow (bananas, lemons)
     { hue: 80, name: "Lime" },         // Lime/Yellow-Green (limes, leaves)
-    { hue: 120, name: "Green" },       // Green (grass, leaves)
-    { hue: 160, name: "Teal" },        // Teal (turquoise, some ocean water)
-    { hue: 200, name: "Sky Blue" },    // Sky Blue (clear sky)
-    { hue: 220, name: "Blue" },        // Blue (blueberries, jeans)
-    { hue: 260, name: "Purple" },      // Purple (grapes, lavender)
+    { hue: 120, name: "Verde" },       // Green (grass, leaves)
+    { hue: 160, name: "Turchese" },    // Teal (turquoise, some ocean water)
+    { hue: 200, name: "Azzurro" },     // Sky Blue (clear sky)
+    { hue: 220, name: "Blu" },         // Blue (blueberries, jeans)
+    { hue: 260, name: "Viola" },       // Purple (grapes, lavender)
     { hue: 280, name: "Magenta" },     // Magenta (some flowers)
-    { hue: 320, name: "Pink" },        // Pink (pink flowers, cotton candy)
-    { hue: 350, name: "Rose" }         // Rose/Dark Pink (roses)
+    { hue: 320, name: "Rosa" },        // Pink (pink flowers, cotton candy)
+    { hue: 350, name: "Fucsia" }       // Rose/Dark Pink (roses)
 ];
 
 // DOM Elements
@@ -182,7 +182,7 @@ function getColorForCell(row, col) {
 // Add a new player input
 function addPlayer() {
     const playerNumber = players.length + 1;
-    const playerName = `Player ${playerNumber}`;
+    const playerName = `Giocatore ${playerNumber}`;
     
     players.push({
         name: playerName,
@@ -225,10 +225,10 @@ function revealAnswer() {
         
         if (player.guess === targetCoords) {
             resultItem.classList.add('correct');
-            resultItem.textContent = `${player.name}: Correct! (${player.guess})`;
+            resultItem.textContent = `${player.name}: Corretto! (${player.guess})`;
         } else {
             resultItem.classList.add('incorrect');
-            resultItem.textContent = `${player.name}: Wrong! Guessed ${player.guess || 'nothing'}`;
+            resultItem.textContent = `${player.name}: Sbagliato! Ha indovinato ${player.guess || 'niente'}`;
         }
         
         resultsList.appendChild(resultItem);

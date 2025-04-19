@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Grid Game</title>
+    <title>Gioco dei Colori</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Color Grid Game</h1>
+        <h1>Gioco dei Colori</h1>
         
         <div id="game-setup" class="game-section">
-            <p>A party game for 3+ players. One player will see a secret cell, then others try to guess it!</p>
-            <button id="start-game" class="btn">Start New Game</button>
+            <p>Un gioco per 3+ giocatori. Un giocatore vedrà una cella segreta, poi gli altri dovranno indovinarla!</p>
+            <button id="start-game" class="btn">Nuova Partita</button>
         </div>
 
         <div id="target-reveal" class="game-section hidden">
-            <h2>Remember this cell!</h2>
+            <h2>Ricorda questa cella!</h2>
             <div id="target-cell"></div>
             <p id="target-coords"></p>
-            <button id="got-it" class="btn">Got It!</button>
+            <button id="got-it" class="btn">Ho Capito!</button>
         </div>
 
         <div id="game-play" class="game-section hidden">
@@ -46,13 +46,13 @@
             
             <div id="guessing-area">
                 <div id="player-inputs"></div>
-                <button id="add-player" class="btn">Add Player</button>
-                <button id="reveal-answer" class="btn">Reveal Answer</button>
+                <button id="add-player" class="btn">Aggiungi Giocatore</button>
+                <button id="reveal-answer" class="btn">Rivela Risposta</button>
             </div>
         </div>
 
         <div id="game-result" class="game-section hidden">
-            <h2>Results</h2>
+            <h2>Risultati</h2>
             <div class="grid-container">
                 <div class="grid-labels-row">
                     <div class="empty-corner"></div>
@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div id="results-list"></div>
-            <button id="play-again" class="btn">Play Again</button>
+            <button id="play-again" class="btn">Gioca Ancora</button>
         </div>
     </div>
 
