@@ -4,7 +4,7 @@ const COLUMN_LABELS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
 let targetCell = null;
 let players = [];
 let startingHue = 0; // Randomized for each game
-const HUE_RANGE = 90; // Increased range of hues for better differentiation
+const HUE_RANGE = 120; // Further increased range for more distinct colors
 
 // Natural color presets that match real-world objects
 const NATURAL_COLOR_BASES = [
@@ -168,13 +168,13 @@ function getColorForCell(row, col) {
     const hueStep = HUE_RANGE / (GRID_SIZE - 1);
     const hue = (startingHue + col * hueStep) % 360;
     
-    // More distinct saturation steps
-    // From 65% to 90% with more noticeable steps
-    const saturation = 65 + (25 * row / (GRID_SIZE - 1));
+    // Even more distinct saturation steps
+    // From 60% to 95% with larger steps
+    const saturation = 60 + (35 * row / (GRID_SIZE - 1));
     
     // More distinct lightness steps
-    // From 80% down to 40% with bigger steps between rows
-    const lightness = 80 - (40 * row / (GRID_SIZE - 1));
+    // From 85% down to 35% with bigger steps between rows
+    const lightness = 85 - (50 * row / (GRID_SIZE - 1));
     
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 }
